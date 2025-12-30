@@ -9,6 +9,4 @@ export namespace UserModel {
 
   export type UserResponse = typeof UserResponse.static;
 
-  export const getUserByIdInvalid = t.Literal("User not found");
-  export type getUserByIdInvalid = typeof getUserByIdInvalid.static;
 }

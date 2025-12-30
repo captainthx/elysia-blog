@@ -1,3 +1,4 @@
+import { ExceptionModel } from "@/exceptions/model";
 import authPlugin from "@/lib/auth.plugin";
 import { UserModel } from "@/user/model";
 import jwt from "@elysiajs/jwt";
@@ -24,7 +25,8 @@ export const user = new Elysia({ prefix: "/auth" })
       },
       response: {
         200: UserModel.UserResponse,
-        404: UserModel.getUserByIdInvalid,
+        404: ExceptionModel.errorResponse,
+        500: ExceptionModel.errorResponse
       },
     }
   );

@@ -29,14 +29,10 @@ export namespace AuthModel {
   });
 
   export type signInResponse = typeof signInResponse.static;
-  export const signInInvalid = t.Literal("Invalid username or password");
-  export type signInInvalid = typeof signInInvalid.static;
 
   export const signUpResponse = t.Object({
     message: t.String(),
     token: t.String(),
   });
   export type signUpResponse = typeof signUpResponse.static;
-  export const signUpInvalid = t.Literal("User already exists");
-  export type signUpInvalid = typeof signUpInvalid.static;
 }

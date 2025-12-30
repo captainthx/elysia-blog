@@ -6,4 +6,8 @@ export class UserError extends AppError {
         super(message)
         this.status = status
     }
+
+    static userNotFound() {
+        return new UserError("User not found", 404)
+    }
 }

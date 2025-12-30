@@ -31,27 +31,6 @@ const app = new Elysia()
       },
     })
   )
-  .error({
-    "AppError":AppError
-  })
-  .onError({as:"global"},({ error, code, set }) => {
-    console.log({error,code});
-    if (code === "VALIDATION") {
-      set.status = 400;
-      const field = (error as any).all?.[0]?.path?.slice(1) || 'Field';
-      const message = (error as any).all?.[0]?.message || error.message;
-      const fullMessage = `${field} ${message}`;
-      return {
-        error: fullMessage,
-        code: 400,
-      };
-    }
-    if (error instanceof AppError) {
-      return error.toResponse();
-    }
-  })
-  .use(auth)
-  .use(user)
   .use(
     logixlysia({
       config: {
@@ -73,15 +52,46 @@ const app = new Elysia()
       },
     })
   )
-  .get("/", ({ store, request }) => {
-    const { logger, pino } = store;
-    logger.info(request, "logger", {
-      message: "Hello World",
-    });
-    pino.info("auth-service");
-    return "Hello World";
+  .error({
+    "AppError": AppError
   })
+  .onError({ as: "global" }, ({ error, code, set, store, request }) => {
+    const { logger } = store
+
+    if (error instanceof AppError) {
+      set.status = error.status;
+      return error.toResponse();
+    }
+
+    if (code === "VALIDATION") {
+      set.status = 400;
+      const field = (error as any).all?.[0]?.path?.slice(1) || 'Field';
+      const message = (error as any).all?.[0]?.message || error.message;
+      return {
+        error: `${field} ${message}`,
+        code: 400,
+      };
+    }
+
+    if (code === "NOT_FOUND") {
+      set.status = 404;
+      return {
+        error: "Not Found",
+        code: 404
+      };
+    }
+
+    logger.error(request, "internal Server Error", error)
+    set.status = 500;
+    return {
+      error: "Internal Server Error",
+      code: 500
+    };
+  })
+  .use(auth)
+  .use(user)
   .listen(3000);
+
 
 console.log(
   `🦊 Elysia is running at ${app.server?.hostname}:${app.server?.port}`

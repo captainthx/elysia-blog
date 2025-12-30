@@ -1,4 +1,3 @@
-import { status } from "elysia";
 import { eq } from "drizzle-orm";
 
 import type { AuthModel } from "@/auth/model";
@@ -14,17 +13,13 @@ export abstract class Auth {
       .where(eq(userSchema.username, username));
 
     if (!user) {
-      throw new AuthError(
-        "Invalid username or password" satisfies AuthModel.signInInvalid,
-      );
+      throw AuthError.userNotFound()
     }
 
     const isMatch = await Bun.password.verify(password, user.password);
 
     if (!isMatch) {
-      throw new AuthError(
-        "Invalid username or password" satisfies AuthModel.signInInvalid,
-      );
+      throw AuthError.invalidCredentials()
     }
 
     const response = {
@@ -42,10 +37,7 @@ export abstract class Auth {
       .where(eq(userSchema.username, username));
 
     if (user) {
-      throw status(
-        400,
-        "User already exists" satisfies AuthModel.signUpInvalid
-      );
+      throw AuthError.duplicateUser()
     }
     const hashedPassword = await Bun.password.hash(password);
 
@@ -69,10 +61,7 @@ export abstract class Auth {
       .where(eq(userSchema.id, id));
 
     if (!user) {
-      throw status(
-        404,
-        "User not found" satisfies AuthModel.getUserByIdInvalid
-      );
+      throw AuthError.userNotFound()
     }
 
     const response = {

@@ -6,14 +6,9 @@ export abstract class AppError extends Error {
   }
 
   toResponse() {
-    return Response.json(
-      {
-        error: this.message,
-        code: this.status,
-      },
-      {
-        status: this.status,
-      }
-    );
+    return {
+      error: this.message,
+      code: this.status,
+    };
   }
 }

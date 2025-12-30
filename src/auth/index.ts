@@ -1,5 +1,6 @@
 import { AuthModel } from "@/auth/model";
 import { Auth } from "@/auth/service";
+import { ExceptionModel } from "@/exceptions/model";
 import jwt from "@elysiajs/jwt";
 import { Elysia } from "elysia";
 
@@ -34,7 +35,7 @@ export const auth = new Elysia({ prefix: "/auth" })
       body: AuthModel.signInBody,
       response: {
         200: AuthModel.signInResponse,
-        400: AuthModel.signInInvalid,
+        401: ExceptionModel.errorResponse,
       },
     }
   )
@@ -62,7 +63,8 @@ export const auth = new Elysia({ prefix: "/auth" })
       body: AuthModel.signUpBody,
       response: {
         200: AuthModel.signUpResponse,
-        400: AuthModel.signUpInvalid,
+        400: ExceptionModel.errorResponse,
+        500: ExceptionModel.errorResponse
       },
     }
   );
