@@ -9,12 +9,12 @@ export const user = pgTable("user", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
-export const blogs=pgTable("blogs",{
-    id:integer("id").generatedAlwaysAsIdentity().primaryKey(),
-    title:varchar("title").notNull(),
-    content:jsonb("content").notNull(),
-    createdAt:timestamp("created_at").defaultNow().notNull(),
-    ownerId:integer("user_id").notNull().references(() => user.id),
+export const blogs = pgTable("blogs", {
+  id: integer("id").generatedAlwaysAsIdentity().primaryKey(),
+  title: varchar("title").notNull(),
+  content: jsonb("content").notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  ownerId: integer("user_id").notNull().references(() => user.id),
 })
 
 export const usersRelations = relations(user, ({ many }) => ({

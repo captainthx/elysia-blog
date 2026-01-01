@@ -6,6 +6,7 @@ import { auth } from "@/auth";
 import { user } from "@/user";
 import logixlysia from "logixlysia";
 import { AppError } from "@/exceptions/appError";
+import { blog } from "@/blog";
 
 const app = new Elysia()
   .use(
@@ -80,7 +81,6 @@ const app = new Elysia()
         code: 404
       };
     }
-
     logger.error(request, "internal Server Error", error)
     set.status = 500;
     return {
@@ -90,6 +90,7 @@ const app = new Elysia()
   })
   .use(auth)
   .use(user)
+  .use(blog)
   .listen(3000);
 
 
