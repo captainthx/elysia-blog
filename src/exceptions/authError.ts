@@ -19,4 +19,8 @@ export class AuthError extends AppError {
 	static duplicateUser() {
 		return new AuthError("User already exists")
 	}
+
+	static invalidToken() {
+		return new AuthError("Invalid token")
+	}
 }

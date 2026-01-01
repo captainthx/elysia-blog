@@ -1,4 +1,5 @@
 import { Auth } from "@/auth/service";
+import { AuthError } from "@/exceptions/authError";
 import bearer from "@elysiajs/bearer";
 import jwt from "@elysiajs/jwt";
 import Elysia from "elysia";
@@ -14,9 +15,7 @@ const authPlugin = new Elysia({ name: "auth-plugin" })
   .derive({ as: "scoped" }, async ({ jwt, set, bearer }) => {
     const jwtPayload = await jwt.verify(bearer);
     if (!jwtPayload || !jwtPayload.sub) {
-      console.log("invalid token ", jwtPayload);
-      set.status = "Forbidden";
-      throw new Error("invalid token");
+      throw AuthError.invalidToken()
     }
 
     const userId = +jwtPayload.sub;
