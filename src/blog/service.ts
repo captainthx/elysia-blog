@@ -2,6 +2,7 @@ import { db } from "@/db";
 import { BlogModel } from "./model";
 import { blogs as blogSchema } from "@/db/schema";
 import { eq } from "drizzle-orm";
+import { BlogError } from "@/exceptions/blogError";
 
 export abstract class Blog {
 
@@ -32,6 +33,9 @@ export abstract class Blog {
                 }
             }
         })
+        if (!results) {
+            throw BlogError.blogNotFound()
+        }
         return results
     }
 
@@ -45,7 +49,58 @@ export abstract class Blog {
             },
             where: eq(blogSchema.id, blogId),
         })
-        console.log(typeof result)
+        if (!result) {
+            throw BlogError.blogNotFound()
+        }
         return result
+    }
+    static async updateBlog({ body, blogId }: { body: BlogModel.updateBlogBody, blogId: number }) {
+        const { title, content } = body
+
+        const blog = await db.query.blogs.findFirst({
+            where: eq(blogSchema.id, blogId),
+        })
+
+        if (!blog) {
+            throw BlogError.blogNotFound()
+        }
+        const [updatedBlog] = await db.update(blogSchema)
+            .set({
+                ...(title ? { title } : {}),
+                ...(content ? { content } : {})
+            })
+            .where(eq(blogSchema.id, blogId))
+            .returning({
+                blogId: blogSchema.id,
+                title: blogSchema.title,
+                content: blogSchema.content,
+                createdAt: blogSchema.createdAt,
+            })
+
+        return {
+            blogId: updatedBlog.blogId,
+            title: updatedBlog.title,
+            content: updatedBlog.content as string,
+            createdAt: updatedBlog.createdAt,
+        }
+
+    }
+
+    static async deleteBlog({ blogId }: { blogId: number }): Promise<BlogModel.deleteBlogResponse> {
+        const blog = await db.query.blogs.findFirst({
+            where: eq(blogSchema.id, blogId),
+        })
+
+        if (!blog) {
+            throw BlogError.blogNotFound()
+        }
+        const [deletedBlog] = await db.delete(blogSchema)
+            .where(eq(blogSchema.id, blogId))
+            .returning({ id: blogSchema.id })
+
+        return {
+            message: "Blog deleted successfully",
+            blogId: deletedBlog.id
+        }
     }
 }
