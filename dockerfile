@@ -2,21 +2,21 @@ FROM oven/bun AS build
 
 WORKDIR /app
 
-COPY package.json package.json
-COPY bun.lock bun.lock
+COPY package.json bun.lock ./
+COPY tsconfig.json ./
 
 RUN bun install
 
-COPY ./src ./src
+COPY src ./src
 
 ENV NODE_ENV=production
 
 RUN bun build \
-	--compile \
-	--minify-whitespace \
-	--minify-syntax \
-	--outfile server \
-	src/index.ts
+  --compile \
+  --minify-whitespace \
+  --minify-syntax \
+  --outfile server \
+  src/index.ts
 
 FROM gcr.io/distroless/base
 
