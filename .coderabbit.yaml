@@ -1,9 +1,54 @@
 # yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
+#
+# CodeRabbit production-minimal config
+# Keep this file in the repo root so CodeRabbit reads it on every PR.
+
 language: "en-US"
+early_access: false
+
 reviews:
   profile: "chill"
   review_status: true
   high_level_summary: true
+  high_level_summary_in_walkthrough: false
+  commit_status: true
+  fail_commit_status: true
+  collapse_walkthrough: true
+  changed_files_summary: true
+  estimate_code_review_effort: true
+
   auto_review:
     enabled: true
+    auto_incremental_review: true
+    auto_pause_after_reviewed_commits: 5
     drafts: false
+    ignore_title_keywords:
+      - "WIP"
+      - "[skip review]"
+      - "[no review]"
+    labels:
+      - "!do-not-review"
+      - "!skip-review"
+    ignore_usernames:
+      - "dependabot[bot]"
+      - "renovate[bot]"
+      - "github-actions[bot]"
+    description_keyword: ""
+
+  path_instructions:
+    - path: "src/**"
+      instructions: |
+        Review production code for correctness, security, and maintainability.
+        Focus on auth, validation, error handling, data exposure, and performance regressions.
+
+    - path: "tests/**"
+      instructions: |
+        Review tests for clarity, coverage, and reliability.
+        Focus on edge cases, stable assertions, and meaningful test names.
+
+    - path: ".github/workflows/**"
+      instructions: |
+        Review CI workflows for least privilege, secrets safety, and pinned actions.
+
+chat:
+  auto_reply: true
