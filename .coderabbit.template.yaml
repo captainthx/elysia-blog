@@ -1,0 +1,157 @@
+# yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
+#
+# CodeRabbit production template
+# - Copy this file to `.coderabbit.yaml` in the root of each repository you want to configure.
+# - Adjust path instructions and tools to match the stack in that repository.
+# - Keep the file in Git so every PR uses the same review policy.
+
+language: "en-US"
+early_access: false
+
+reviews:
+  # "chill" = fewer, higher-signal comments.
+  # Switch to "assertive" if you want stricter and more verbose feedback.
+  profile: "chill"
+
+  # Usually keep this false unless you want CodeRabbit to auto-approve when all comments are resolved.
+  request_changes_workflow: false
+
+  # Keep the PR summary visible and concise.
+  high_level_summary: true
+  high_level_summary_in_walkthrough: false
+  high_level_summary_placeholder: "@coderabbitai summary"
+
+  # Optional polish controls.
+  review_status: true
+  review_details: false
+  commit_status: true
+  fail_commit_status: true
+  collapse_walkthrough: true
+  changed_files_summary: true
+  sequence_diagrams: true
+  estimate_code_review_effort: true
+  assess_linked_issues: true
+
+  auto_review:
+    # Review every new PR by default.
+    enabled: true
+
+    # Keep incremental reviews on each push so feedback stays current.
+    auto_incremental_review: true
+
+    # Prevent endless churn on very active branches.
+    # Set to 0 if you want every push reviewed without auto-pausing.
+    auto_pause_after_reviewed_commits: 5
+
+    # Draft PRs are usually not ready for review yet.
+    drafts: false
+
+    # Default branch is always included automatically.
+    # Add extra branch patterns only when you intentionally want reviews there too.
+    # base_branches:
+    #   - "release/.*"
+    #   - "hotfix/.*"
+
+    # Common review hygiene filters.
+    ignore_title_keywords:
+      - "WIP"
+      - "[skip review]"
+      - "[no review]"
+
+    labels:
+      - "!do-not-review"
+      - "!skip-review"
+
+    # Dependency and automation bots usually do not need human-style review noise.
+    ignore_usernames:
+      - "dependabot[bot]"
+      - "renovate[bot]"
+      - "github-actions[bot]"
+      - "release-bot"
+
+    # Leave empty unless you want opt-in review only.
+    description_keyword: ""
+
+  # Repository-wide file guidance.
+  # Use this for high-value, repeated review rules that apply across the codebase.
+  path_instructions:
+    - path: "src/**"
+      instructions: |
+        Review backend code with a production mindset.
+        Focus on:
+        - authentication and authorization
+        - input validation and output encoding
+        - error handling and status codes
+        - unsafe database access or ORM bypasses
+        - secrets, tokens, and sensitive data exposure
+        - performance regressions and unnecessary allocations
+
+    - path: "tests/**"
+      instructions: |
+        Review tests for correctness, clarity, and maintainability.
+        Focus on:
+        - descriptive test names
+        - edge cases and error paths
+        - stable assertions
+        - avoiding brittle implementation details
+        - coverage for security-sensitive and failure scenarios
+
+    - path: "docs/**"
+      instructions: |
+        Review documentation for correctness and freshness.
+        Focus on:
+        - outdated API references
+        - examples that no longer match the implementation
+        - ambiguous setup or deployment steps
+
+    - path: ".github/workflows/**"
+      instructions: |
+        Review CI workflows carefully.
+        Focus on:
+        - least-privilege permissions
+        - pinned or versioned actions
+        - secrets exposure
+        - caching correctness
+        - build/test matrix coverage
+
+  # Optional path filters.
+  # Uncomment and tailor these if you want to reduce noise from generated or heavy files.
+  # path_filters:
+  #   - "!**/node_modules/**"
+  #   - "!**/dist/**"
+  #   - "!**/coverage/**"
+  #   - "!**/.next/**"
+  #   - "!**/.nuxt/**"
+  #   - "!**/generated/**"
+  #   - "!**/__generated__/**"
+  #   - "!**/*.lock"
+  #   - "!**/bun.lockb"
+  #   - "!**/*.png"
+  #   - "!**/*.jpg"
+  #   - "!**/*.svg"
+  #   - "!**/*.mp4"
+
+  # Tool controls.
+  # Enable only the tools that fit the repository stack.
+  # tools:
+  #   eslint:
+  #     enabled: true
+  #   gitleaks:
+  #     enabled: true
+  #   stylelint:
+  #     enabled: true
+
+chat:
+  # Useful if you want CodeRabbit to answer follow-up questions on PRs.
+  auto_reply: true
+
+# Optional advanced sections. Keep these commented until you need them.
+#
+# knowledge_base:
+#   enabled: true
+#
+# code_generation:
+#   enabled: true
+#
+# issue_enrichment:
+#   enabled: true
